@@ -988,6 +988,7 @@ NAME_LATIN_EXTENDED: Final = "latin_extended"
 NAME_CYRILLIC: Final = "cyrillic"
 NAME_CJK: Final = "cjk"
 NAME_GREEK: Final = "greek"
+NAME_KOREAN: Final = "korean"
 
 
 def get_font_maps_for_name(

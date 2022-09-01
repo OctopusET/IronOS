@@ -27,9 +27,15 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 HERE = Path(__file__).resolve().parent
 
 
-@functools.lru_cache(maxsize=None)
+@functools.lru_cache(maxsize=1)
 def cjk_font() -> Font:
     with open(os.path.join(HERE, "wqy-bitmapsong/wenquanyi_9pt.bdf"), "rb") as f:
+        return bdfreader.read_bdf(f)
+
+
+@functools.lru_cache(maxsize=1)
+def korean_font() -> Font:
+    with open(os.path.join(HERE, "test.bdf"), "rb") as f:
         return bdfreader.read_bdf(f)
 
 
@@ -241,7 +247,15 @@ def get_letter_counts(
 
 
 def get_cjk_glyph(sym: str) -> bytes:
-    glyph: Glyph = cjk_font()[ord(sym)]
+    return get_bdf_glyph(sym, cjk_font())
+
+
+def get_korean_glyph(sym: str) -> bytes:
+    return get_bdf_glyph(sym, korean_font())
+
+
+def get_bdf_glyph(sym: str, font: List[Glyph]) -> bytes:
+    glyph: Glyph = font[ord(sym)]
 
     data = glyph.data
     src_left, src_bottom, src_w, src_h = glyph.get_bounding_box()
@@ -394,11 +408,13 @@ def get_font_map_per_font(text_list: List[str], fonts: List[str]) -> FontMapsPer
                 f"Font {font} not used because all symbols already have font bitmaps"
             )
             continue
-
+        is_korean = False
+        is_cjk = False
         if font == font_tables.NAME_CJK:
             is_cjk = True
+        elif font == font_tables.NAME_KOREAN:
+            is_korean = True
         else:
-            is_cjk = False
             font12: Dict[str, bytes]
             font06: Dict[str, bytes]
             font12, font06 = font_tables.get_font_maps_for_name(font)
@@ -408,6 +424,11 @@ def get_font_map_per_font(text_list: List[str], fonts: List[str]) -> FontMapsPer
                 continue
             if is_cjk:
                 font12_line = get_cjk_glyph(sym)
+                if font12_line is None:
+                    continue
+                font06_line = None
+            elif is_korean:
+                font12_line = get_korean_glyph(sym)
                 if font12_line is None:
                     continue
                 font06_line = None
@@ -616,6 +637,7 @@ def prepare_languages(
         font_tables.NAME_LATIN_EXTENDED,
         font_tables.NAME_CYRILLIC,
         font_tables.NAME_CJK,
+        font_tables.NAME_KOREAN,
     ]
 
     # Build the full font maps
@@ -835,7 +857,7 @@ def write_languages(
                 font_map.font12,
                 symbol_conversion_table,
             )
-            if font != font_tables.NAME_CJK:
+            if font != font_tables.NAME_CJK and font != font_tables.NAME_KOREAN:
                 font_table_text += "// 6x8:\n"
                 font_table_text += make_font_table_named_cpp(
                     None,
@@ -878,7 +900,7 @@ def write_languages(
             font_uncompressed = bytearray()
             for sym in current_sym_list:
                 font_uncompressed.extend(font_map.font12[sym])
-            if font != font_tables.NAME_CJK:
+            if font != font_tables.NAME_CJK and font != font_tables.NAME_KOREAN:
                 for sym in current_sym_list:
                     font_uncompressed.extend(font_map.font06[sym])  # type: ignore[arg-type]
             font_compressed = brieflz.compress(bytes(font_uncompressed))
