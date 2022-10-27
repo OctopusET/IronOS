@@ -3,36 +3,30 @@
 	"languageLocalName": "Korean",
 	"fonts": [
 		"ascii_basic",
-		"cjk"
+		"korean"
 	],
 	"tempUnitFahrenheit": true,
 	"messages": {
-		"SettingsCalibrationWarning": "진행하기 전에 인두 팁이 실온 상태인지 확인하십시오!",
-		"SettingsResetWarning": "기본 설정으로 복원하시겠습니까?",
+		"SettingsCalibrationWarning": "진행 하기 전에 인두 팁과 손잡이가 실온 상태인지 확인 하십시오!",
+		"SettingsResetWarning": "기본 설정으로 초기화 하시겠습니까?",
 		"UVLOWarningString": "DC 낮음",
 		"UndervoltageString": "부족전압",
-		"InputVoltageString": "입력 V: ",
+		"InputVoltageString": "입력 전압(V): ",
 		"SleepingSimpleString": "Zzzz",
 		"SleepingAdvancedString": "절전 중...",
 		"SleepingTipAdvancedString": "팁:",
 		"OffString": "꺼짐",
-		"DeviceFailedValidationWarning": "위조품일 수 도 있습니다!"
+		"DeviceFailedValidationWarning": "장치가 위조품일 수 있습니다!"
 	},
 	"messagesWarn": {
-		"ResetOKMessage": "리셋 OK",
+		"ResetOKMessage": "Reset OK",
 		"SettingsResetMessage": "설정 변경됨!",
-		"NoAccelerometerMessage": [
-			"가속도계",
-			"감지되지 않음"
-		],
-		"NoPowerDeliveryMessage": [
-			"USB-PD IC",
-			"감지되지 않음!"
-		],
-		"LockingKeysString": "잠김",
-		"UnlockingKeysString": "잠김 해제",
+		"NoAccelerometerMessage": "가속도계 미감지",
+		"NoPowerDeliveryMessage": "PD IC 미감지",
+		"LockingKeysString": "잠금",
+		"UnlockingKeysString": "잠금 해제",
 		"WarningKeysLockedString": "!잠김!",
-		"WarningThermalRunaway": "열 폭주"
+		"WarningThermalRunaway": "과열 상태"
 	},
 	"characters": {
 		"SettingRightChar": "R",
@@ -78,92 +72,88 @@
 	},
 	"menuOptions": {
 		"DCInCutoff": {
-			"text2": "전원",
-			"desc": "Power source. Sets cutoff voltage. (DC 10V) (S 3.3V per cell, disable power limit)"
+			"text2": "",
+			"desc": ""
 		},
 		"SleepTemperature": {
-			"text2": "절전 온도",
+			"text2": "절전온도",
 			"desc": "\"절전 모드\"시의 인두 팁 온도"
 		},
 		"SleepTimeout": {
-			"text2": "절전 모드 대기 시간",
-			"desc": "\"절전 모드\" 까지의 대기 시간"
+			"text2": "절전대기",
+			"desc": "절전 모드 시작 전 대기 시간 (s=초 | m=분)"
 		},
 		"ShutdownTimeout": {
-			"text2": "전원 끄기 대기 시간",
-			"desc": "인두기 전원 끌 때까지의 대기 시간"
+			"text2": "종료대기",
+			"desc": "기기 종료 전 대기 시간 (m=분)"
 		},
 		"MotionSensitivity": {
 			"text2": "동작 민감도",
-			"desc": "0=끔 | 1=최소 민감도 | ... | 9=최대 민감도"
+			"desc": "0=꺼짐 | 1=최소 민감도 | ... | 9=최대 민감도"
 		},
 		"TemperatureUnit": {
 			"text2": "온도 단위",
-			"desc": "C=°섭씨 | F=°화씨"
+			"desc": "C=섭씨 | F=화씨"
 		},
 		"AdvancedIdle": {
-			"text2": "대기 화면 상세 정보",
-			"desc": "상세 정보를 작은 폰트로 대기 화면에 표시"
+			"text2": "상세대기화면",
+			"desc": "대기화면에서 상세 정보 표시 (작은 글꼴 사용)"
 		},
 		"DisplayRotation": {
 			"text2": "화면 방향",
 			"desc": "R=오른손잡이 | L=왼손잡이 | A=자동"
 		},
 		"BoostTemperature": {
-			"text2": "부스트 온도",
-			"desc": "\"boost mode\"시의 인두 팁 온도"
+			"text2": "부스트온도",
+			"desc": "부스트 모드에서 사용할 온도"
 		},
 		"AutoStart": {
-			"text2": "시작시 동작",
-			"desc": "O=끄기 | S=납땜 온도로 가열 | Z=움직일때까지 절전 모드 온도로 대기 | R=울직일때까지 가열하지 않고 대기 "
+			"text2": "시작 동작",
+			"desc": "O=꺼짐 | S=납땜 온도로 높이기 | Z=움직일 때까지 대기 온도로 유지 | R=움직일 때까지 온도 높이지 않기"
 		},
 		"CooldownBlink": {
-			"text2": "냉각 중 점멸",
-			"desc": "가열이 멈추고 식을 때까지 온도 표시를 점멸합니다"
-		},
-		"TemperatureCalibration": {
-			"text2": "온도 보정",
-			"desc": "인두 팁 냉접정 보상 보정 (델타 T가 5°C 이하일 경우 필요하지 않습니다)"
+			"text2": "냉각중 점멸",
+			"desc": "팁 온도가 높을 때 온도 표시 깜빡이기"
 		},
 		"SettingsReset": {
-			"text2": "공장 초기화",
-			"desc": "모든 설정을 기본 설정으로 복원"
+			"text2": "기본 설정 복원",
+			"desc": "모든 설정을 기본 설정으로 초기화"
 		},
 		"VoltageCalibration": {
 			"text2": "입력 전압 보정",
-			"desc": "입력 전압 보정 시작 (길게 눌러서 나가기)"
+			"desc": "입력 전압(VIN) 보정 시작 (길게 눌러 나가기)"
 		},
 		"AdvancedSoldering": {
-			"text2": "상세 납땜 화면",
-			"desc": "납땜 화면에서 작은 글꼴을 사용해서 더 상세한 정보를 표시"
+			"text2": "",
+			"desc": "작은 폰트 사용으로 더 자세한 정보를 납땜 화면에서 표시"
 		},
 		"ScrollingSpeed": {
 			"text2": "스크롤 속도",
-			"desc": "텍스트 스크롤 속도 조정 (S=느리게 | F=빠르게)"
+			"desc": "글씨 스크롤 속도 조정 (S=느리게 | F=빠르게)"
 		},
 		"QCMaxVoltage": {
 			"text2": "QC 전압",
-			"desc": "인두기가 사용 시도하는 최대 QC 전압"
+			"desc": "기기가 사용하려고 시도할 최대 QC 전압"
 		},
 		"PDNegTimeout": {
-			"text2": "PD 타입아웃",
-			"desc": "PD 사용 시도 대기시간, 일부 QC 충전기 호환을 위해 100ms 단위로 설정합니다"
+			"text2": "PD 대기시간",
+			"desc": "일부 QC 충전기 호환을 위한 PD 시도 대기 시간(100ms 간격)"
 		},
 		"PowerLimit": {
-			"text2": "전력 한도",
-			"desc": "인두기가 사용할 수 있는 최대 전력 (W=와트)"
+			"text2": "전력 제한",
+			"desc": "기기가 사용할 수 있는 최대 전력 (W=와트)"
 		},
 		"ReverseButtonTempChange": {
-			"text2": "+ - 키 전환",
+			"text2": "+- 전환",
 			"desc": "온도 조절 버튼 전환"
 		},
 		"TempChangeShortStep": {
-			"text2": "짧게 눌러 온도 변경",
-			"desc": "버튼을 짧게 눌러서 온도 변경"
+			"text2": "온도변경(짧게)",
+			"desc": "짧게 눌러 온도 증가"
 		},
 		"TempChangeLongStep": {
-			"text2": "길게 눌러 온도 변경",
-			"desc": "버튼을 길게 눌러서 온도 변경"
+			"text2": "온도변경(길게)",
+			"desc": "길게 눌러 온도 증가"
 		},
 		"PowerPulsePower": {
 			"text2": "전력 펄스",
@@ -171,34 +161,34 @@
 		},
 		"HallEffSensitivity": {
 			"text2": "홀 센서 민감도",
-			"desc": "대기 모드 진입 동작을 위한 홀(Hall) 효과 민감도 설정 (0=끄기 | 1=최소 민감도 | ... | 9=최대 민감도)"
+			"desc": "Sensitivity of the Hall effect sensor to trigger sleep mode (0=off | 1=least sensitive | ... | 9=most sensitive)"
 		},
 		"LockingMode": {
-			"text2": "버튼 잠금 허용",
-			"desc": "납땜 중에 양 버튼을 눌러 잠금하기 (D=비활성화 | B=부스트 모드 전용 | F=모두)"
+			"text2": "버튼잠금허용",
+			"desc": "While soldering, hold down both buttons to toggle locking them (D=disable | B=boost mode only | F=full locking)"
 		},
 		"MinVolCell": {
-			"text2": "최소 전압",
+			"text2": "최소전압",
 			"desc": "Minimum allowed voltage per cell (3S: 3 - 3.7V | 4-6S: 2.4 - 3.7V)"
 		},
 		"AnimLoop": {
-			"text2": "애니메이션 반복",
-			"desc": "주 메뉴 아이콘 애니메이션 반복하기"
+			"text2": "동작 반복",
+			"desc": "Loop icon animations in main menu"
 		},
 		"AnimSpeed": {
-			"text2": "애니메이션 속도",
-			"desc": "메뉴 아이콘 애니메이션 반복 속도 (O=끄기 | S=느리게 | M=중간 | F=빠르게)"
+			"text2": "동작 속도",
+			"desc": "Pace of icon animations in menu (O=off | S=slow | M=medium | F=fast)"
 		},
 		"PowerPulseWait": {
-			"text2": "전력 펄스 딜레이",
+			"text2": "전력 펄스 대기 시간",
 			"desc": "Delay before keep-awake-pulse is triggered (x 2.5s)"
 		},
 		"PowerPulseDuration": {
-			"text2": "전력 펄스 듀레이션",
+			"text2": "전력 펄스 지속 시간",
 			"desc": "Keep-awake-pulse duration (x 250ms)"
 		},
 		"LanguageSwitch": {
-			"text2": " 언어: KO 한국어",
+			"text2": "언어:   KO     Korean",
 			"desc": "Current firmware language"
 		},
 		"Brightness": {
@@ -206,12 +196,16 @@
 			"desc": "Adjust the brightness of the OLED screen"
 		},
 		"ColourInversion": {
-			"text2": "화면 반전",
+			"text2": "색상 반전",
 			"desc": "Invert the colours of the OLED screen"
 		},
 		"LOGOTime": {
-			"text2": "부트 로고 지속시간",
+			"text2": "부트 로고 지속 시간",
 			"desc": "Sets the duration for the boot logo (s=seconds)"
+		},
+		"CalibrateCJC": {
+			"text2": "CJC 보정",
+			"desc": "Calibrate tip Cold Junction Compensation at the next boot (not required if Delta T is < 5°C)"
 		}
 	}
 }
