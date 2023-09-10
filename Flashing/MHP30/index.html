@@ -8,7 +8,7 @@
     <title>MHP30 - IronOS</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,12 @@
         var mkdocs_page_url = "/IronOS/Flashing/MHP30/";
       </script>
     
-    <script src="../../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,7 +34,7 @@
           <a href="../.." class="icon icon-home"> IronOS
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -92,11 +92,15 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../HallSensor/">Hall Sensor (Pinecil)</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Bluetooth/">Bluetooth (Pinecil V2)</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../Hardware/">Hardware Notes</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../Troubleshooting/">Troubleshooting</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../HardwareIssues/">Known Hardware Issues</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../PowerSources/">Power sources</a>
                   </li>
               </ul>
               <ul>
@@ -105,6 +109,10 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../../Development/">Development</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../History/">Changelog</a>
                 </li>
               </ul>
       </div>
@@ -120,11 +128,11 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
           <li>Flashing the firmware &raquo;</li>
-      <li>MHP30</li>
+      <li class="breadcrumb-item active">MHP30</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ralim/IronOS/edit/master/docs/Flashing/MHP30.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/Flashing/MHP30.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -173,7 +181,7 @@ Then this works the same as a production release (use the correct file).</p>
 </blockquote>
 <h2 id="linux">Linux</h2>
 <p>While in the past there were reports of unreliable upgrades, the consensus in <a href="https://github.com/Ralim/IronOS/issues/11">issue 11</a> is that things work mostly as expected in Linux.</p>
-<p>@awigen has contributed a script <a href="https://raw.githubusercontent.com/Ralim/IronOS/master/Flashing/flash_ts100_linux.sh">flash_ts100_linux.sh</a> that works on Ubuntu 16.04 as well as other distros.</p>
+<p>@awigen has contributed a script <a href="https://raw.githubusercontent.com/Ralim/IronOS/dev/scripts/flash_ts100_linux.sh">flash_ts100_linux.sh</a> that works on Ubuntu 16.04 as well as other distros.</p>
 <p>If you want to do it manually (or if the script does not work for some reason) the general procedure is the same as for Windows, the differences are in the way to mount the unit and copy the firmware.
 Remember that after flashing, the firmware filename will have changed to end in <code>.RDY</code> or <code>.ERR</code> or <code>.NOT</code> and only <code>.RDY</code> means the flashing was successful!</p>
 <ul>
@@ -265,14 +273,15 @@ This will <strong>NOT</strong> show up as a USB storage drive, but instead show 
     
   </span>
 </div>
-    <script>var base_url = '../..';</script>
-    <script src="../../js/theme_extra.js" defer></script>
-    <script src="../../js/theme.js" defer></script>
-      <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

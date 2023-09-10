@@ -8,7 +8,7 @@
     <title>Troubleshooting - IronOS</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,12 @@
         var mkdocs_page_url = "/IronOS/Troubleshooting/";
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,7 +34,7 @@
           <a href=".." class="icon icon-home"> IronOS
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -82,10 +82,14 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../HallSensor/">Hall Sensor (Pinecil)</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Bluetooth/">Bluetooth (Pinecil V2)</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Hardware/">Hardware Notes</a>
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="./">Troubleshooting</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tip-shorted-warning">Tip Shorted warning</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#high-tip-temp-reading-when-the-tip-is-cool">High tip temp reading when the tip is cool</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#rtip-is-out-of-spec">RTip is out of spec</a>
@@ -104,6 +108,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../HardwareIssues/">Known Hardware Issues</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../PowerSources/">Power sources</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../Translation/">Translations</a>
@@ -111,6 +117,10 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../Development/">Development</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../History/">Changelog</a>
                 </li>
               </ul>
       </div>
@@ -126,11 +136,11 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
           <li>Hardware &raquo;</li>
-      <li>Troubleshooting</li>
+      <li class="breadcrumb-item active">Troubleshooting</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ralim/IronOS/edit/master/docs/Troubleshooting.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/Troubleshooting.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -147,6 +157,13 @@
 But it is helpful to do some basic diagnostics first just in case the issue is easily fixed.</p>
 <p>The <strong>VAST</strong> majority of issues are poor soldering or cold solder joints.
 If you can open up your iron, give it a good look at all the connection points, and use another iron to reflow any suspicious ones, this can fix most issues.</p>
+<h2 id="tip-shorted-warning">Tip Shorted warning</h2>
+<p>If you are powering up a device that supports tip resistance detection (TS101 and Pinecilv2 as of present), the firmware checks the readings of the raw tip resistance and sorts these into three "bins". <code>8 ohm tips</code>, <code>6.2 ohm tips</code> and <code>tip-shorted</code>. The tip resistance is used when negotiating USB-PD and in thermal calculations.
+The <code>tip-shorted</code> option is selected if your tip is measured to be abnormally small. This could indicate a failed driver mosfet or a failed tip.</p>
+<p>When this warning is shown; heating will be disabled to protect from damage. As trying to heat a shorted tip can damage the iron itself.</p>
+<p>It is best to take out your tip and manually measure and verify the tip's resistance. It should be 6-8 ohms (depending on tip type). When measuring resistances this small some multimeters can struggle. If you have access to a current limited bench power supply, you can try doing a 4 wire measurement by measuring the voltage drop on the tip while applying a known current. <code>(R=V/I)</code>.</p>
+<p>If the tip measures correctly you may have a damaged driver mosfet; it would be ideal to open your iron and test the mosfet is operating correctly.
+If after both of these checks everything looks as expected, feel free to open a discussion on IronOS to talk about the issue (Or for Pinecil the community chat can be a much faster response).</p>
 <h2 id="high-tip-temp-reading-when-the-tip-is-cool">High tip temp reading when the tip is cool</h2>
 <p>If you are finding the tip is reading high; the first fields to check in the Debug menu are <code>RTip</code> and <code>CHan</code>.</p>
 <ul>
@@ -187,8 +204,22 @@ Press the front button (<code>+/A</code>) on your device and check if the tip he
 If the tip does not heat up, it is worth trying to reflash the firmware first in case it is corrupted.</p>
 <p>The main failure mode of the OLED display module is usually poor soldering on the OLED display cable to the main PCB.
 As this is soldered by hand generally, it's the most prone to failures.</p>
-<p>If you have a poor connection or a floating pin, you can end up with a state where the screen works <em>sometimes</em> and then freezes or only works on some power cycles. It might work on very old versions of IronOS but not the newest ones. You could try to reflow the pins for the OLED. On 96x16 screens, carefully peel it back from the adhesive and reflow the solder on the pins. If needed, replacement Oled screens are common and low cost.</p>
+<p>If you have a poor connection or a floating pin, you can end up with a state where the screen works <em>sometimes</em> and then freezes or only works on some power cycles. It might work on very old versions of IronOS but not the newest ones. You could try to reflow the pins for the OLED. On 96x16 screens, carefully peel it back from the adhesive and reflow the solder on the pins.</p>
 <p>As the OLED runs on an I2C bus, there are pull up resistors on the SDA and SCL pins. It is worth checking these as well, while they don't often fail, issues with these can cause <em>weird</em> display issues.</p>
+<p>If after all of the checks OLED is still blank, or screen works but pixels are barely visible, although soldering iron itself is working (i.e., you can safely check that it's turning on, heating up &amp; melting solder successfully), then it means that <em>most likely</em> OLED is dead. But it can be relatively easily replaced. Models like <code>TS100</code>, <code>TS80</code>, and <code>TS80P</code> share the same OLED screen which can be bought online and used for replacement. To do so:</p>
+<ul>
+<li>
+<p>find &amp; buy at electronics shop [of your choice] display with the following spec line:<br />
+<code>OLED 0.69 inch / 14 pins / 96 x 16 pixels / **9616TSWC** / I2C IIC</code></p>
+</li>
+<li>
+<p>disassemble your soldering iron;</p>
+</li>
+<li>desolder old OLED and solder back new one;</li>
+<li>assemble your soldering iron back.</li>
+</ul>
+<p>There are a few youtube videos how to do it like <a href="https://www.youtube.com/watch?v=HlWAY0oYPFI">this one for <code>TS100</code></a>.</p>
+<p>Unfortunately, this is a well-known issue of screens with OLED technology: sooner or later the brightness is starting to <em>"fade out"</em> until complete off. Usually common recommendations to prolong its lifetime are: reduce brightness &amp; reduce too often updates (i.e., disable animations). But your results may vary since there were reports when users couldn't see anything after turning on soldering irons which were just laying in a box for a few months after buying. And there are users with first <code>TS100</code> models not having any issues with display at all.</p>
 <h2 id="tip-heats-when-not-in-heating-mode">Tip heats when not in heating mode</h2>
 <p>⚠️ DISCONNECT YOUR TIP ⚠️</p>
 <p>Most likely you have either a blown MOSFET or shorted pin.
@@ -235,14 +266,15 @@ The firmware will not enable the tip until you are in soldering mode.</p>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

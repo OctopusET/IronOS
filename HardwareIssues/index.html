@@ -8,7 +8,7 @@
     <title>Known Hardware Issues - IronOS</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,12 @@
         var mkdocs_page_url = "/IronOS/HardwareIssues/";
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,7 +34,7 @@
           <a href=".." class="icon icon-home"> IronOS
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -82,6 +82,8 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../HallSensor/">Hall Sensor (Pinecil)</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Bluetooth/">Bluetooth (Pinecil V2)</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Hardware/">Hardware Notes</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Troubleshooting/">Troubleshooting</a>
@@ -98,6 +100,8 @@
     </li>
     </ul>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../PowerSources/">Power sources</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../Translation/">Translations</a>
@@ -105,6 +109,10 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../Development/">Development</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../History/">Changelog</a>
                 </li>
               </ul>
       </div>
@@ -120,11 +128,11 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
           <li>Hardware &raquo;</li>
-      <li>Known Hardware Issues</li>
+      <li class="breadcrumb-item active">Known Hardware Issues</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ralim/IronOS/edit/master/docs/HardwareIssues.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/HardwareIssues.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -159,7 +167,7 @@ you are expecting to see measurements in the range of 4-10 ohms. Anything higher
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../Troubleshooting/" class="btn btn-neutral float-left" title="Troubleshooting"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../Translation/" class="btn btn-neutral float-right" title="Translations">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../PowerSources/" class="btn btn-neutral float-right" title="Power sources">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -189,18 +197,19 @@ you are expecting to see measurements in the range of 4-10 ohms. Anything higher
       <span><a href="../Troubleshooting/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../Translation/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../PowerSources/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

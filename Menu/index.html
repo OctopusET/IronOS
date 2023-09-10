@@ -8,7 +8,7 @@
     <title>Main Menu - IronOS</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,12 @@
         var mkdocs_page_url = "/IronOS/Menu/";
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,7 +34,7 @@
           <a href=".." class="icon icon-home"> IronOS
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -67,6 +67,8 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#soldering-mode">Soldering mode</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#profile-mode-mhp30-only">Profile mode (MHP30 only)</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#settings-mode">Settings mode</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#calibrating-input-voltage">Calibrating input voltage</a>
@@ -96,11 +98,15 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../HallSensor/">Hall Sensor (Pinecil)</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Bluetooth/">Bluetooth (Pinecil V2)</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Hardware/">Hardware Notes</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Troubleshooting/">Troubleshooting</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../HardwareIssues/">Known Hardware Issues</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../PowerSources/">Power sources</a>
                   </li>
               </ul>
               <ul>
@@ -109,6 +115,10 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../Development/">Development</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../History/">Changelog</a>
                 </li>
               </ul>
       </div>
@@ -124,11 +134,11 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
           <li>Operation &raquo;</li>
-      <li>Main Menu</li>
+      <li class="breadcrumb-item active">Main Menu</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ralim/IronOS/edit/master/docs/Menu.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/Menu.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -143,13 +153,18 @@
 - Use each button to go up/down in temperature. Pressing both buttons exits the temperature menu (or wait 3 seconds and it will time out).
 - Pressing both buttons or holding the rear button (<code>-/B</code>) will exit Soldering Mode.
 - Holding the front button (<code>+/A</code>) will enter <a href="https://ralim.github.io/IronOS/Menu/#boost-mode">Boost mode</a> (if enabled).</p>
+<h2 id="profile-mode-mhp30-only">Profile mode (MHP30 only)</h2>
+<p>In this mode, accessible by long pressing <code>(+/A)</code>, the configured profile will be initiated.
+- You cannot adjust the temperature or enter boost mode.
+- Pressing both buttons or holding the rear button (<code>-/B</code>) will exit Profile Mode as well.</p>
 <h2 id="settings-mode">Settings mode</h2>
 <p>This mode allows you to cycle through all the options and set custom values.
 The menu is arranged so that the most often used settings are first.</p>
 <ul>
-<li>The rear button (<code>-/B</code>) cycles through the main options.</li>
-<li>The front button (<code>+/A</code>) changes the selected option.</li>
-<li>Note that settings are not saved until you exit the menu.</li>
+<li>The rear button (<code>-/B</code>) cycles through the main options. (declines i.e. Additional warning to proceed.)</li>
+<li>The front button (<code>+/A</code>) either enters a submenu or changes the selected option. (accepts i.e. Additional warning to proceed.)</li>
+<li>If the device is unplugged before exiting the main menu settings will not be saved.</li>
+<li>To exit the menu, either continue to press (<code>-/B</code>) or hold it until the idle screen is reached. Alternatively, you could press (<code>-/A</code>) &amp; (<code>-/B</code>) simultaneously to exit the submenu and once more to exit the main menu.</li>
 <li>If you idle on a setting (i.e., don't press any buttons), after 3 seconds, the screen scrolls a brief description (mini help guide).</li>
 <li>Enter submenus using the front button (<code>+/A</code>) if you are going to change it or wish to view it.</li>
 <li>Scrolling through the all options of a submenu will return you back to its entry location.</li>
@@ -169,9 +184,11 @@ Note that cutoff messages can also be triggered by using a power supply that is 
 <li>Press both buttons at the same time to Save and Exit to the menu</li>
 </ol>
 <h3 id="calibrate-tip-cjc">Calibrate Tip CJC</h3>
-<p>This performs a Tip Cold Junction Calibration (CJC) (<a href="https://ralim.github.io/IronOS/Temperature/">see Temperature for details</a>). This is normally not needed unless you have an issue with tip temperature or your tips are wearing out prematurely. Changing tip lengths does not necessarily mean a calibration is needed. Check first that your tips are not defective, and measured resistance is close to specifications (Pinecil/TS100 short tips 6.2 Ω, long tips 8 Ω, TS80(P) ~4.5 Ω).</p>
-<p>What this is for: some tips have an offset on their readings which causes issues, i.e., the actual temperature of the tip is much higher than displayed. To calibrate this out, perform the following steps. </p>
-<p>Caution: if the method below is not followed, the iron could be worse than before calibration. If you need to repeat the method, first unplug and let the handle/PCB cool down to room temperature.</p>
+<p>This calibrates the <a href="https://ralim.github.io/IronOS/Temperature/">Cold Junction Compensation</a> <em>(CJC)</em> for the tip. This is normally not needed unless you have an issue with tip temperature or your tips are wearing out prematurely. Changing tip lengths does not necessarily mean a calibration is needed. Check first that your tips are not defective and measured resistance is close to specifications <em>[Pinecil / TS100 short tips </em><em>6.2 Ω</em><em>, long tips </em><em>8 Ω</em><em>, TS80/P ~</em><em>4.5 Ω</em><em>]</em>.</p>
+<p>What this is for:<br>
+Some tips have an offset on their readings which causes issues, i.e. The actual temperature of the tip is much higher than displayed. Follow the steps below to calibrate this.</p>
+<p>Caution:<br>
+If the method below is not followed, the iron could be worse than before calibration. If you need to repeat the method, first unplug and let the handle/PCB cool down to room temperature.</p>
 <ol>
 <li>Connect power to your device.</li>
 <li>Go to <strong><code>Advanced Settings</code></strong> using (<code>-/B</code>) and press (<code>+/A</code>) to select it. Use (<code>-/B</code>) to scroll to <strong><code>Calibrate CJC at next boot</code></strong> and confirm with (<code>+/A</code>).</li>
@@ -180,11 +197,11 @@ Note that cutoff messages can also be triggered by using a power supply that is 
 <li>Unplug you device.</li>
 <li><strong>Critical: Make sure a tip is attached &amp; wait until the tip &amp; handle are at room temperature.</strong> (Wait a reasonable amount of time after having used the device.)</li>
 <li>Power the device and ideally keep it out of your hands (You know it might get warm.).</li>
-<li>The display shows <strong><code>....</code></strong> for a short time while the device measures and compares the tip and handle voltages.</li>
-<li>As a result the new <em>Offset value</em> is displayed. This value can later be viewed in the <strong><code>Debug menu</code></strong>.</li>
+<li>The display shows <strong><code>calibrating ....</code></strong> for a short time while the device measures and compares the tip and handle voltages.</li>
+<li><strong><code>Calibration done!</code></strong> is displayed for 3 seconds. The new offset value can later be viewed in the <strong><code>Debug menu</code></strong>.</li>
 <li>Calibration is done and the device proceeds booting.</li>
 </ol>
-<p>Note: offsets are dependant on your tip, temperature sensor, and the MCU. It's the culmination of tolerances at rest. Typical values are 700-1000 range. This is only designed to be used at boot while cold (ambient room temperature), as temperatures drift apart as soon as power is connected. Doing this reading repeatedly could result in wide varience of the offset number and/or incorrect calibration.</p>
+<p>Note: offsets are dependant on your tip, temperature sensor, and the MCU. It's the culmination of tolerances at rest. Typical values are 700-1000 range. This is only designed to be used at boot while cold (ambient / room temperature), as temperatures drift apart as soon as power is connected. Doing this reading repeatedly could result in wide varience of the offset number and/or incorrect calibration.</p>
 <h3 id="boost-mode">Boost mode</h3>
 <p>This allows you to change the front button (<code>+/A</code>) to become a boost button when you hold it for &gt; 2 seconds. A boost button changes the soldering temperature for short periods. For example, when soldering a big joint and you need a much higher temperature, hold the (<code>+/A</code>) button down and it will temporarily increase the temperature to your 'boost' setting. When you release the button, the temperature will gradually go back to the normal set temperature.</p>
 <p>The boost temperature is set in Soldering settings.</p>
@@ -227,14 +244,15 @@ Note that cutoff messages can also be triggered by using a power supply that is 
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
