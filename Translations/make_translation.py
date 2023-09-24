@@ -39,7 +39,7 @@ def load_json(filename: str) -> dict:
         return json.loads(f.read())
 
 
-def get_language_unqiue_id(language_ascii_name: str):
+def get_language_unique_id(language_ascii_name: str):
     """
     Given a language code, it will return a unique (enough) uint16_t id code
     When we have a collision here we can tweak this, but language list should be fairly stable from now on
@@ -918,7 +918,7 @@ def write_languages(
         f.write("const LanguageMeta LanguageMetas[] = {\n")
         for lang in data.langs:
             lang_code = lang["languageCode"]
-            lang_id = get_language_unqiue_id(lang_code)
+            lang_id = get_language_unique_id(lang_code)
             f.write(
                 "  {\n"
                 f"    .uniqueID = {lang_id},\n"
@@ -948,7 +948,7 @@ def write_languages(
         f.write("const LanguageMeta LanguageMetas[] = {\n")
         for lang in data.langs:
             lang_code = lang["languageCode"]
-            lang_id = get_language_unqiue_id(lang_code)
+            lang_id = get_language_unique_id(lang_code)
             f.write(
                 "  {\n"
                 f"    .uniqueID = {lang_id},\n"
