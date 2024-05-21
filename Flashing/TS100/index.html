@@ -58,7 +58,7 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../TS80%28P%29/">TS80(P)</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">TS100</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">TS100</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#downloading-source-file">Downloading source file</a>
         <ul>
@@ -102,6 +102,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../PowerSources/">Power sources</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../PortingToNewDevice/">New Hardware Requirements</a>
+                  </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../../Translation/">Translations</a>
@@ -128,8 +130,8 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-          <li>Flashing the firmware &raquo;</li>
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Flashing the firmware</li>
       <li class="breadcrumb-item active">TS100</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/Flashing/TS100.md" class="icon icon-github"> Edit on GitHub</a>
@@ -159,8 +161,8 @@ In general you probably want <code>master</code>.</p>
 <p>Once you click on a run, scroll down to the "Artifacts" section and then click on your model to download a zip file.
 Then this works the same as a production release (use the correct file).</p>
 <h1 id="ts100">TS100</h1>
-<p>This is completely safe, but if it goes wrong just put the <code>.hex</code> file from the official website (<a href="https://www.minidso.com/forum.php?mod=viewthread&amp;tid=868&amp;extra=page%3D1">TS100</a> onto the unit and you're back to the old firmware. Downloads for the <code>.hex</code> files to flash are available on the <a href="https://github.com/Ralim/IronOS/releases">releases page.</a> The file you want is called TS100.zip. Inside the zip file (make sure to extract the file before flashing with it) will be a file called <code>TS100_{Language-Code}.hex</code>.</p>
-<p>Officially the bootloader on the devices only works under Windows (use the built-in File Explorer, as alternative file managers or copy handlers like Teracopy will fail). However, users have reported that it does work under Mac, and can be made to work under Linux <em>sometimes</em>. Details over on the <a href="https://github.com/Ralim/IronOS/wiki/Upgrading-Firmware">wiki page</a>.</p>
+<p>This is completely safe, but if it goes wrong just put the corresponding <code>.hex</code> file from <a href="https://e-design.com.cn/en/NewsDetail/4203645.html">the official website</a> (<a href="https://github.com/Ralim/IronOS-Meta/tree/main/Firmware/Miniware">mirror backup</a>) onto the unit and you're back to the old firmware. Downloads for the <code>.hex</code> files to flash are available on the <a href="https://github.com/Ralim/IronOS/releases">releases page.</a> The file you want is called TS100.zip. Inside the zip file (make sure to extract the file before flashing with it) will be a file called <code>TS100_{Language-Code}.hex</code>.</p>
+<p>Officially the bootloader on the devices only works under Windows (use the built-in File Explorer, as alternative file managers or copy handlers like Teracopy will fail). However, users have reported that it does work under <a href="#mac">Mac</a>, and can be made to work under <a href="#linux">Linux</a> <em>sometimes</em> (look for details below).</p>
 <ol>
 <li>Hold the button closest to the tip (MHP30 the left button on the back), and plug in the USB to the computer.</li>
 <li>The unit will appear as a USB drive. (Screen will say <code>DFU</code> on it.)</li>

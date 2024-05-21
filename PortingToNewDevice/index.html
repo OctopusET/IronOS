@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://ralim.github.io/IronOS/Hardware/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://ralim.github.io/IronOS/PortingToNewDevice/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Hardware Notes - IronOS</title>
+    <title>New Hardware Requirements - IronOS</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Hardware Notes";
-        var mkdocs_page_input_path = "Hardware.md";
-        var mkdocs_page_url = "/IronOS/Hardware/";
+        var mkdocs_page_name = "New Hardware Requirements";
+        var mkdocs_page_input_path = "PortingToNewDevice.md";
+        var mkdocs_page_url = "/IronOS/PortingToNewDevice/";
       </script>
     
     <!--[if lt IE 9]>
@@ -84,19 +84,7 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Bluetooth/">Bluetooth (Pinecil V2)</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Hardware Notes</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#ts100">TS100</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#ts80">TS80</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#ts80p">TS80P</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#mhp30">MHP30</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#pinecil">Pinecil</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../Hardware/">Hardware Notes</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../Troubleshooting/">Troubleshooting</a>
                   </li>
@@ -104,7 +92,29 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../PowerSources/">Power sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../PortingToNewDevice/">New Hardware Requirements</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">New Hardware Requirements</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#hard-requirements">Hard requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#soft-requirements">Soft requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#planned-features">Planned features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#note-a-flash-storage-space">Note A - Flash storage space</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#note-b-pinmap-for-the-microcontroller">Note B - Pinmap for the microcontroller</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-request-for-adding-a-new-device">Example request for adding a new device</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#hardware-details">Hardware details</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
                   </li>
               </ul>
               <ul>
@@ -134,9 +144,9 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
           <li class="breadcrumb-item">Hardware</li>
-      <li class="breadcrumb-item active">Hardware Notes</li>
+      <li class="breadcrumb-item active">New Hardware Requirements</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/Hardware.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/ralim/IronOS/edit/dev/Documentation/PortingToNewDevice.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -144,56 +154,69 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h2 id="notes-on-the-various-supported-hardware">Notes on the various supported hardware</h2>
-<h3 id="ts100">TS100</h3>
-<p>TS100* is a neat soldering iron:</p>
+                <h1 id="requesting-support-for-a-new-device">Requesting support for a new device</h1>
+<p>IronOS is largely designed to run on devices that are using <em>fairly</em> modern microcontrollers at their core. Generally this means an ARM Cortex or RISC-V processor.
+At this point in time it is not planned to support 8051 or similar cored devices. This is largely due to the reliance on FreeRTOS at the moment.</p>
+<p>When requesting a port for a new device, please try and find out if the hardware meets the below requirements.</p>
+<p>The feature list's below are organised into three categories; Hard requirements that as of current must be met, soft requirements that <em>should</em> be met for full featured performance and the final category of planned <em>but not yet implemented</em> features; which can be implemented but can result in delays as these are not yet implemented.</p>
+<p>Aside from the below, keep in mind IronOS is really designed for soldering irons. This has expanded out into hot-plates as they are exceptionally similar devices.</p>
+<h2 id="hard-requirements">Hard requirements</h2>
+<ol>
+<li>Supported processor (Arm Cortex or RISC-V). (Though generally anything that has an existing FreeRTOS port is possible).</li>
+<li>64K of flash or larger (See note A)</li>
+<li>16K of ram or larger</li>
+<li>Device has one or more heating elements that can be controlled by a main temperature sensor</li>
+<li>If the main temperature sensor is a thermocouple, a reference temperature sensor for cold junction compensation must exist and be close to the sensor contacts</li>
+<li>Means of the user updating the device without opening</li>
+<li>Known pinmap for the microcontroller. (see note B)</li>
+</ol>
+<h2 id="soft-requirements">Soft requirements</h2>
+<ol>
+<li>USB-PD is strongly preferred over Quick Charge; Quick Charge only devices are considered legacy and will likely not be prioritiesd.</li>
+<li>Open source or at the least schematics available is <strong>strongly</strong> preferred and will prioritise the device.</li>
+<li>Likewise friendly vendors will help dramatically with support, due to both questions and also appearances to help the community.</li>
+<li>Hardware PWM wired up to the tip control is nice to have but not essential</li>
+<li>Very strong preference against devices that use the endless sea of STM32 clones.</li>
+</ol>
+<h2 id="planned-features">Planned features</h2>
+<p>These features are planned for eventual support, but will likely not be done until devices need them.</p>
 <ul>
-<li>can run from 9-25V DC;</li>
-<li>provides a power range that is determined by the input voltage;</li>
-<li>voltages below 12V don't overly work well for any substantial mass;</li>
-<li>the original firmware can be found <a href="https://e-design.com.cn/en/NewsDetail/4203645.html">here</a>(<a href="https://github.com/Ralim/IronOS-Meta/tree/main/Firmware/Miniware">mirror backup</a>).</li>
+<li>Colour screens</li>
+<li>More than 2 buttons for input, or encoder inputs</li>
+<li>WiFi/Zigbee/ any other networking</li>
 </ul>
-<p><img alt="" src="https://brushlesswhoop.com/images/ts100-og.jpg" /></p>
-<h3 id="ts80">TS80</h3>
-<p>TS80* is a successor to TS100:</p>
-<ul>
-<li>uses <em>Quick Charge 3.0</em> / <em>QC3</em> capable charger only (18W max);</li>
-<li>doesn't support PD as it is not designed on the hardware level;</li>
-<li>the original firmware can be found <a href="https://e-design.com.cn/en/NewsDetail/4203645.html">here</a>(<a href="https://github.com/Ralim/IronOS-Meta/tree/main/Firmware/Miniware">mirror backup</a>).</li>
-</ul>
-<p><img alt="" src="https://core-electronics.com.au/media/catalog/product/4/2/4244-01.jpg" /></p>
-<h3 id="ts80p">TS80P</h3>
-<p>TS80P* is a successor to TS80:</p>
-<ul>
-<li>supports <em>Quick Charge 3.0</em> (<em>QC3</em>: 9V/3A, 18W max);</li>
-<li>supports <em>Power Delivery</em> (<em>PD</em>: 9V/3A &amp; 12V/3A, 30W max)**;</li>
-<li>the original firmware can be found <a href="https://e-design.com.cn/en/NewsDetail/4203645.html">here</a>(<a href="https://github.com/Ralim/IronOS-Meta/tree/main/Firmware/Miniware">mirror backup</a>).</li>
-</ul>
-<p>**: use valid PD device that supports 12V/3A as power source to get full 30W potential, otherwise the iron will fall back to 9V/18W power mode.</p>
-<p><img alt="" src="https://static.eleshop.nl/mage/media/catalog/product/cache/10/image/800x/040ec09b1e35df139433887a97daa66f/s/-/s-l1600_5.jpg" /></p>
-<h3 id="mhp30">MHP30</h3>
-<p>MHP30 is a <strong>M</strong>ini <strong>H</strong>ot <strong>P</strong>late:</p>
-<ul>
-<li>accelerometer is the MSA301, this is mounted roughly in the middle of the unit;</li>
-<li>USB-PD is using the FUSB302;</li>
-<li>the hardware I2C bus on PB6/7 is used for the MSA301 and FUSB302;</li>
-<li>the OLED is the same SSD1306 as everything else, but it’s on a bit-banged bus;</li>
-<li>the original firmware can be found <a href="https://e-design.com.cn/en/NewsDetail/4203645.html">here</a>(<a href="https://github.com/Ralim/IronOS-Meta/tree/main/Firmware/Miniware">mirror backup</a>).</li>
-</ul>
-<h3 id="pinecil">Pinecil</h3>
-<p>Pincecil*:</p>
-<ul>
-<li>first model of soldering iron from PINE64;</li>
-<li>the default firmware can be found <a href="https://files.pine64.org/os/Pinecil/Pinecil_firmware_20201115.zip">here</a>.</li>
-</ul>
-<p><img alt="" src="https://pine64.com/wp-content/uploads/2020/11/pinecil-bb2-04.jpg?v=0446c16e2e66" /></p>
-<p>*: Please note: these soldering irons do <em>NOT</em> contain DC/DC converters. This means that your power at the tip is a function of the supplied voltage. Just because the iron "supports" running at a wide range of voltages, you should always use a voltage near the upper limit where possible. It is highly recommended to use a PD adapter where possible as this allows the iron to <em>know</em> the limitations of your supply. The marked irons can only turn the tip on and off in software, this means that they can't control the maximum power drawn from the supply. This is why when using PD the iron may select a lower voltage than your power supplies maximum. This is to prevent your power supply failing from over current. For more information about power management underhood, please, <a href="https://ralim.github.io/IronOS/Power/">see the related documentation section</a>.</p>
+<h2 id="notes">Notes</h2>
+<h3 id="note-a-flash-storage-space">Note A - Flash storage space</h3>
+<p>64KB is generally the minimum recommended size for the hardware to have.
+Larger is <em>definitely</em> preferred as it enables more features or the multi-pack language firmwares.
+Keep in mind that on some devices we loose space to a USB DFU bootloader (Older STM32F1's) so the firmware <em>can</em> work with less. But it can come at the cost of features.
+128KB or larger is <strong>great</strong>.
+For devices that have BLE or WiFi or other features, often code requirements are significantly larger. These are considered non essential features so will be ignored if we run into size issues.</p>
+<h3 id="note-b-pinmap-for-the-microcontroller">Note B - Pinmap for the microcontroller</h3>
+<p>In order to be able to write the interfacing code to communicate with the hardware, we need to know what pins on the microcontroller go to what hardware.
+It is also loosely required to have an understanding of the rest of the device, we do not need details on a lot of the boring aspects,but if for example a USB-PD interface IC is used we would want to know which one.</p>
+<h2 id="example-request-for-adding-a-new-device">Example request for adding a new device</h2>
+<p>Device Name:
+Device Type:
+Approximate Price:
+Example purchase locations:</p>
+<h3 id="hardware-details">Hardware details</h3>
+<p>Microcontroller version: <code>STM32F103C8Tx</code>
+Flash size (If external to the MCU):<code>N/A</code>
+Microcontroller Pinout: <!-- Either link to manufacturer information, a forum documenting this or a discussion where the pinout has been roughly figured out already-->
+Device type: <!-- Soldering Iron/Hot Plate/ Reflow oven etc-->
+Device meets hard requirements list []
+Device meets soft requirements list []</p>
+<p>Device features USB-PD []
+Device features USB-QC []
+Device features DC Input []
+Device features BLE []</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../Bluetooth/" class="btn btn-neutral float-left" title="Bluetooth (Pinecil V2)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../Troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../PowerSources/" class="btn btn-neutral float-left" title="Power sources"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Translation/" class="btn btn-neutral float-right" title="Translations">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -220,10 +243,10 @@
         </span>
     
     
-      <span><a href="../Bluetooth/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../PowerSources/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../Troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../Translation/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
