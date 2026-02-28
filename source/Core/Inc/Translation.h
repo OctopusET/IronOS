@@ -183,6 +183,10 @@ struct FontSection {
   uint16_t       font06_decompressed_size;
   const uint8_t *font12_compressed_source; // Pointer to compressed data or null
   const uint8_t *font06_compressed_source; // Pointer to compressed data or null
+  const uint8_t *font08_start_ptr;         // 8px wide small font (e.g. Korean), null if unused
+  uint16_t       font08_decompressed_size;
+  const uint8_t *font08_compressed_source;
+  uint16_t       font06_glyph_count;       // Number of 6px glyphs; 0 = all 6px (legacy)
 };
 
 extern const FontSection FontSectionInfo;

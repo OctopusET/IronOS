@@ -196,8 +196,15 @@ void OLED::drawChar(const uint16_t charCode, const FontStyle fontStyle, const ui
       return;
     }
 
-    currentFont = fontStyle == FontStyle::SMALL ? FontSectionInfo.font06_start_ptr : FontSectionInfo.font12_start_ptr;
-    index       = charCode - 2;
+    if (fontStyle == FontStyle::SMALL && FontSectionInfo.font08_start_ptr != nullptr && FontSectionInfo.font06_glyph_count > 0 && (charCode - 2) >= FontSectionInfo.font06_glyph_count) {
+      // Wide small font glyph (e.g. Korean 8x8)
+      fontWidth   = 8;
+      currentFont = FontSectionInfo.font08_start_ptr;
+      index       = charCode - 2 - FontSectionInfo.font06_glyph_count;
+    } else {
+      currentFont = fontStyle == FontStyle::SMALL ? FontSectionInfo.font06_start_ptr : FontSectionInfo.font12_start_ptr;
+      index       = charCode - 2;
+    }
     break;
   }
   const uint8_t *charPointer = currentFont + ((fontWidth * (fontHeight / 8)) * index);

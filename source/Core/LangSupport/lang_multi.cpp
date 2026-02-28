@@ -61,6 +61,11 @@ void prepareTranslations() {
   if (FontSectionInfo.font06_compressed_source != NULL) {
     blz_depack(FontSectionInfo.font06_compressed_source, (uint8_t *)FontSectionInfo.font06_start_ptr, FontSectionInfo.font06_decompressed_size);
   }
+
+  // Font 08 (wide small font, e.g. Korean 8x8) can be compressed
+  if (FontSectionInfo.font08_compressed_source != NULL) {
+    blz_depack(FontSectionInfo.font08_compressed_source, (uint8_t *)FontSectionInfo.font08_start_ptr, FontSectionInfo.font08_decompressed_size);
+  }
 }
 
 void settings_setLanguageSwitch(void) {
