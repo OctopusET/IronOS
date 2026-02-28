@@ -33,6 +33,21 @@ def cjk_font() -> Font:
         return bdfreader.read_bdf(f)
 
 
+@functools.lru_cache(maxsize=None)
+def korean_font() -> Font:
+    with open(os.path.join(HERE, "dalmoori/dalmoori_8.bdf"), "rb") as f:
+        return bdfreader.read_bdf(f)
+
+
+def is_hangul(c: str) -> bool:
+    cp = ord(c)
+    return (
+        (0xAC00 <= cp <= 0xD7A3)  # Hangul Syllables
+        or (0x1100 <= cp <= 0x11FF)  # Hangul Jamo
+        or (0x3130 <= cp <= 0x318F)  # Hangul Compatibility Jamo
+    )
+
+
 # Loading a single JSON file
 def load_json(filename: str) -> dict:
     with open(filename) as f:
@@ -304,6 +319,13 @@ def get_letter_counts(defs: dict, lang: dict, build_version: str) -> Dict:
     small_symbol_counts = sort_and_count(small_font_messages)
     big_symbol_counts = sort_and_count(big_font_messages)
 
+    # For Korean, all non-force_large_text strings use small font encoding,
+    # so every character must be in the small font table.  Copy all chars from
+    # big to small (they also stay in big for descriptions that use 12x16).
+    if lang.get("languageCode", "") == "KO":
+        for char, count in list(big_symbol_counts.items()):
+            small_symbol_counts[char] = small_symbol_counts.get(char, 0) + count
+
     return {
         "smallFontCounts": small_symbol_counts,
         "bigFontCounts": big_symbol_counts,
@@ -311,7 +333,7 @@ def get_letter_counts(defs: dict, lang: dict, build_version: str) -> Dict:
 
 
 def convert_letter_counts_to_ranked_symbols_with_forced(
-    symbol_dict: Dict[str, int]
+    symbol_dict: Dict[str, int],
 ) -> List[str]:
     # Add in forced symbols first
     ranked_symbols = []
@@ -408,6 +430,53 @@ def get_cjk_glyph(sym: str) -> Optional[bytes]:
     return bytes(bs)
 
 
+def get_korean_glyph_8x8(sym: str) -> Optional[bytes]:
+    """Extract an 8x8 glyph from the dalmoori BDF font.
+    Returns 8 bytes (one per column, LSB = top pixel)."""
+    try:
+        glyph: Glyph = korean_font()[ord(sym)]
+    except KeyError:
+        return None
+    data = glyph.data
+    src_left, src_bottom, src_w, src_h = glyph.get_bounding_box()
+
+    def get_cell(x: int, y: int) -> bool:
+        adj_x = x - src_left
+        if adj_x < 0 or adj_x >= src_w:
+            return False
+        adj_y = y - (8 - src_h - src_bottom)
+        if adj_y < 0 or adj_y >= src_h:
+            return False
+        return bool(data[src_h - adj_y - 1] & (1 << (src_w - adj_x - 1)))
+
+    bs = bytearray()
+    for c in range(8):
+        b = 0
+        for r in range(8):
+            if get_cell(c, r):
+                b |= 0x01 << r
+        bs.append(b)
+    return bytes(bs)
+
+
+def get_korean_glyph_12x16(sym: str) -> Optional[bytes]:
+    """Place a Korean 8x8 glyph centered in a 12x16 frame for large font table.
+    Returns 24 bytes (12 cols x 2 blocks)."""
+    glyph_8x8 = get_korean_glyph_8x8(sym)
+    if glyph_8x8 is None:
+        return None
+    # Place 8x8 glyph centered: cols 2-9 of 12, rows 4-11 of 16
+    bs = bytearray(24)
+    for c in range(12):
+        if 2 <= c < 10:
+            gc = c - 2
+            # Top block (rows 0-7): glyph rows 0-3 at bit positions 4-7
+            bs[c] = (glyph_8x8[gc] & 0x0F) << 4
+            # Bottom block (rows 8-15): glyph rows 4-7 at bit positions 0-3
+            bs[12 + c] = (glyph_8x8[gc] >> 4) & 0x0F
+    return bytes(bs)
+
+
 def get_bytes_from_font_index(index: int) -> bytes:
     """
     Converts the font table index into its corresponding bytes
@@ -470,58 +539,71 @@ def bytes_to_c_hex(b: bytes) -> str:
 @dataclass
 class FontMapsPerFont:
     font12_symbols_ordered: List[str]
-    font12_maps: Dict[str, Dict[str, bytes]]
+    font12_maps: Dict[str, bytes]
     font06_symbols_ordered: List[str]
-    font06_maps: Dict[str, Dict[str, bytes]]
+    font06_maps: Dict[str, bytes]
+    font08_symbols_ordered: List[str]
+    font08_maps: Dict[str, bytes]
 
 
 def get_font_map_per_font(
-    text_list_small_font: List[str], text_list_large_font: List[str]
+    text_list_small_font: List[str],
+    text_list_large_font: List[str],
+    font06_glyph_count: int = 0,
 ) -> FontMapsPerFont:
-    pending_small_symbols = set(text_list_small_font)
+    # Split small font list into font06 (6x8) and font08 (8x8 Korean) parts
+    if font06_glyph_count > 0:
+        text_list_font06 = text_list_small_font[:font06_glyph_count]
+        text_list_font08 = text_list_small_font[font06_glyph_count:]
+    else:
+        text_list_font06 = text_list_small_font
+        text_list_font08 = []
+
+    pending_small_symbols = set(text_list_font06)
     pending_large_symbols = set(text_list_large_font)
 
-    if len(pending_small_symbols) != len(text_list_small_font):
-        raise ValueError("`text_list_small_font` contains duplicated symbols")
+    if len(pending_small_symbols) != len(text_list_font06):
+        raise ValueError(
+            "`text_list_small_font` (font06 part) contains duplicated symbols"
+        )
     if len(pending_large_symbols) != len(text_list_large_font):
         raise ValueError("`text_list_large_font` contains duplicated symbols")
 
-    total_symbol_count_small = len(pending_small_symbols)
-    # \x00 is for NULL termination and \x01 is for newline, so the maximum
-    # number of symbols allowed is as follow (see also the comments in
-    # `get_bytes_from_font_index`):
+    # Total small font symbols (font06 + font08) share the same index space
+    total_symbol_count_small = len(text_list_small_font)
     if total_symbol_count_small > (0x10 * 0xFF - 15) - 2:  # 4063
         raise ValueError(
             f"Error, too many used symbols for this version (total {total_symbol_count_small})"
         )
-    logging.info(f"Generating fonts for {total_symbol_count_small} symbols")
+    logging.info(
+        f"Generating fonts for {total_symbol_count_small} small symbols ({len(text_list_font06)} font06 + {len(text_list_font08)} font08)"
+    )
 
     total_symbol_count_large = len(pending_large_symbols)
-    # \x00 is for NULL termination and \x01 is for newline, so the maximum
-    # number of symbols allowed is as follow (see also the comments in
-    # `get_bytes_from_font_index`):
     if total_symbol_count_large > (0x10 * 0xFF - 15) - 2:  # 4063
         raise ValueError(
             f"Error, too many used symbols for this version (total {total_symbol_count_large})"
         )
-    logging.info(f"Generating fonts for {total_symbol_count_large} symbols")
+    logging.info(f"Generating fonts for {total_symbol_count_large} large symbols")
 
     # Build the full font maps
 
     font12_map: Dict[str, bytes] = {}
     font06_map: Dict[str, bytes] = {}
+    font08_map: Dict[str, bytes] = {}
 
-    # First we go through and do all of the CJK characters that are in the large font to have them removed
+    # First handle CJK and Korean characters in the large font
     for sym in text_list_large_font:
-        font12_line = get_cjk_glyph(sym)
+        if is_hangul(sym):
+            font12_line = get_korean_glyph_12x16(sym)
+        else:
+            font12_line = get_cjk_glyph(sym)
         if font12_line is None:
             continue
         font12_map[sym] = font12_line
         pending_large_symbols.remove(sym)
-    # Now that all CJK characters are done, we next have to fill out all of the small and large fonts from the remainders
 
-    # This creates our superset of characters to reference off that are pre-rendered ones (non CJK)
-    # Collect font bitmaps by the defined font order:
+    # Pre-rendered fonts (non-CJK, non-Korean)
     for font in font_tables.ALL_PRE_RENDERED_FONTS:
         font12, font06 = font_tables.get_font_maps_for_name(font)
         font12_map.update(font12)
@@ -541,8 +623,8 @@ def get_font_map_per_font(
             f"Missing large font symbols for {len(pending_large_symbols)} characters: {pending_large_symbols}"
         )
 
-    # SMALL FONT
-    for sym in text_list_small_font:
+    # SMALL FONT (font06 part only)
+    for sym in text_list_font06:
         if sym in pending_small_symbols:
             font_data = font06_map.get(sym, None)
             if font_data is None:
@@ -555,8 +637,20 @@ def get_font_map_per_font(
             f"Missing small font symbols for {len(pending_small_symbols)} characters: {pending_small_symbols}"
         )
 
+    # FONT08 (Korean 8x8)
+    for sym in text_list_font08:
+        glyph_data = get_korean_glyph_8x8(sym)
+        if glyph_data is None:
+            raise KeyError(f"Symbol |{sym}| missing in Korean 8x8 font (dalmoori)")
+        font08_map[sym] = glyph_data
+
     return FontMapsPerFont(
-        text_list_large_font, font12_map, text_list_small_font, font06_map
+        text_list_large_font,
+        font12_map,
+        text_list_font06,
+        font06_map,
+        text_list_font08,
+        font08_map,
     )
 
 
@@ -619,7 +713,8 @@ def make_font_table_cpp(
     output_table = make_font_table_named_cpp(
         "USER_FONT_12", large_font_sym_list, font_map.font12_maps
     )
-    output_table += make_font_table_06_cpp(small_font_sym_list, font_map)
+    output_table += make_font_table_06_cpp(font_map)
+    output_table += make_font_table_08_cpp(font_map)
     return output_table
 
 
@@ -638,9 +733,9 @@ def make_font_table_named_cpp(
     return output_table
 
 
-def make_font_table_06_cpp(sym_list: List[str], font_map: FontMapsPerFont) -> str:
+def make_font_table_06_cpp(font_map: FontMapsPerFont) -> str:
     output_table = "const uint8_t USER_FONT_6x8[] = {\n"
-    for i, sym in enumerate(sym_list):
+    for i, sym in enumerate(font_map.font06_symbols_ordered):
         font_bytes = font_map.font06_maps[sym]
         if font_bytes:
             font_line = bytes_to_c_hex(font_bytes)
@@ -648,6 +743,18 @@ def make_font_table_06_cpp(sym_list: List[str], font_map: FontMapsPerFont) -> st
             font_line = "//                                 "  # placeholder
         output_table += f"{font_line}//0x{i + 2:X} -> {sym}\n"
     output_table += "};\n"
+    return output_table
+
+
+def make_font_table_08_cpp(font_map: FontMapsPerFont) -> str:
+    if not font_map.font08_symbols_ordered:
+        return ""
+    output_table = "const uint8_t USER_FONT_8x8[] = {\n"
+    for i, sym in enumerate(font_map.font08_symbols_ordered):
+        font_bytes = font_map.font08_maps[sym]
+        font_line = bytes_to_c_hex(font_bytes)
+        output_table += f"{font_line}//0x{i:X} -> {sym}\n"
+    output_table += "}; // USER_FONT_8x8\n"
     return output_table
 
 
@@ -692,6 +799,22 @@ class LanguageData:
     small_text_symbols: List[str]
     large_text_symbols: List[str]
     font_map: FontMapsPerFont
+    font06_glyph_count: int = 0
+
+
+def partition_small_font_symbols(
+    small_font_symbols: List[str],
+) -> Tuple[List[str], int]:
+    """Partition small font symbols: non-Hangul (font06) first, Hangul (font08) after.
+    Returns (reordered symbols, font06_glyph_count)."""
+    font06_part = [s for s in small_font_symbols if not is_hangul(s)]
+    font08_part = [s for s in small_font_symbols if is_hangul(s)]
+    if font08_part:
+        logging.info(
+            f"Korean mixed-width: {len(font06_part)} font06 + {len(font08_part)} font08 glyphs"
+        )
+        return font06_part + font08_part, len(font06_part)
+    return small_font_symbols, 0
 
 
 def prepare_language(lang: dict, defs: dict, build_version: str) -> LanguageData:
@@ -706,9 +829,12 @@ def prepare_language(lang: dict, defs: dict, build_version: str) -> LanguageData
         letter_count_data["bigFontCounts"]
     )
 
-    # From the letter counts, need to make a symbol index and matching font index
-
-    font_data = get_font_map_per_font(small_font_symbols, large_font_symbols)
+    small_font_symbols, font06_glyph_count = partition_small_font_symbols(
+        small_font_symbols
+    )
+    font_data = get_font_map_per_font(
+        small_font_symbols, large_font_symbols, font06_glyph_count
+    )
 
     return LanguageData(
         [lang],
@@ -717,6 +843,7 @@ def prepare_language(lang: dict, defs: dict, build_version: str) -> LanguageData
         small_font_symbols,
         large_font_symbols,
         font_data,
+        font06_glyph_count,
     )
 
 
@@ -740,7 +867,13 @@ def prepare_languages(
     large_font_symbols = convert_letter_counts_to_ranked_symbols_with_forced(
         total_symbol_counts["bigFontCounts"]
     )
-    font_data = get_font_map_per_font(small_font_symbols, large_font_symbols)
+
+    small_font_symbols, font06_glyph_count = partition_small_font_symbols(
+        small_font_symbols
+    )
+    font_data = get_font_map_per_font(
+        small_font_symbols, large_font_symbols, font06_glyph_count
+    )
 
     return LanguageData(
         langs,
@@ -749,6 +882,7 @@ def prepare_languages(
         small_font_symbols,
         large_font_symbols,
         font_data,
+        font06_glyph_count,
     )
 
 
@@ -762,6 +896,8 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
         data.large_text_symbols
     )
 
+    has_font08 = bool(font_map.font08_symbols_ordered)
+
     if not compress_font:
         font_table_text = make_font_table_cpp(
             data.small_text_symbols,
@@ -771,6 +907,20 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
             large_font_symbol_conversion_table,
         )
         f.write(font_table_text)
+        if has_font08:
+            font08_fields = (
+                "    .font08_start_ptr = USER_FONT_8x8,\n"
+                "    .font08_decompressed_size = 0,\n"
+                "    .font08_compressed_source = 0,\n"
+                f"    .font06_glyph_count = {data.font06_glyph_count},\n"
+            )
+        else:
+            font08_fields = (
+                "    .font08_start_ptr = 0,\n"
+                "    .font08_decompressed_size = 0,\n"
+                "    .font08_compressed_source = 0,\n"
+                "    .font06_glyph_count = 0,\n"
+            )
         f.write(
             "const FontSection FontSectionInfo = {\n"
             "    .font12_start_ptr = USER_FONT_12,\n"
@@ -779,6 +929,7 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
             "    .font06_decompressed_size = 0,\n"
             "    .font12_compressed_source = 0,\n"
             "    .font06_compressed_source = 0,\n"
+            f"{font08_fields}"
             "};\n"
         )
     else:
@@ -792,7 +943,7 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
 
         write_bytes_as_c_array(f, "font_12x16_brieflz", font12_compressed)
         font06_uncompressed = bytearray()
-        for sym in data.small_text_symbols:
+        for sym in font_map.font06_symbols_ordered:
             font06_uncompressed.extend(font_map.font06_maps[sym])
         font06_compressed = brieflz.compress(bytes(font06_uncompressed))
         logging.info(
@@ -801,9 +952,37 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
 
         write_bytes_as_c_array(f, "font_06x08_brieflz", font06_compressed)
 
+        # Font08 (Korean 8x8) compression
+        font08_buffer_decl = ""
+        font08_fields = (
+            "    .font08_start_ptr = 0,\n"
+            "    .font08_decompressed_size = 0,\n"
+            "    .font08_compressed_source = 0,\n"
+            "    .font06_glyph_count = 0,\n"
+        )
+        if has_font08:
+            font08_uncompressed = bytearray()
+            for sym in font_map.font08_symbols_ordered:
+                font08_uncompressed.extend(font_map.font08_maps[sym])
+            font08_compressed = brieflz.compress(bytes(font08_uncompressed))
+            logging.info(
+                f"Font table 08x08 compressed from {len(font08_uncompressed)} to {len(font08_compressed)} bytes (ratio {len(font08_compressed) / len(font08_uncompressed):.3})"
+            )
+            write_bytes_as_c_array(f, "font_08x08_brieflz", font08_compressed)
+            font08_buffer_decl = (
+                f"static uint8_t font08_out_buffer[{len(font08_uncompressed)}];\n"
+            )
+            font08_fields = (
+                "    .font08_start_ptr = font08_out_buffer,\n"
+                f"    .font08_decompressed_size = {len(font08_uncompressed)},\n"
+                "    .font08_compressed_source = font_08x08_brieflz,\n"
+                f"    .font06_glyph_count = {data.font06_glyph_count},\n"
+            )
+
         f.write(
             f"static uint8_t font12_out_buffer[{len(font12_uncompressed)}];\n"
             f"static uint8_t font06_out_buffer[{len(font06_uncompressed)}];\n"
+            f"{font08_buffer_decl}"
             "const FontSection FontSectionInfo = {\n"
             "    .font12_start_ptr = font12_out_buffer,\n"
             "    .font06_start_ptr = font06_out_buffer,\n"
@@ -811,6 +990,7 @@ def render_font_block(data: LanguageData, f: TextIO, compress_font: bool = False
             f"    .font06_decompressed_size = {len(font06_uncompressed)},\n"
             "    .font12_compressed_source = font_12x16_brieflz,\n"
             "    .font06_compressed_source = font_06x08_brieflz,\n"
+            f"{font08_fields}"
             "};\n"
         )
 
@@ -1104,8 +1284,14 @@ def get_translation_strings_and_indices_text(
     def encode_string_and_add(
         message: str, translation_id: str, force_large_text: bool = False
     ):
+        is_korean = lang.get("languageCode", "") == "KO"
         encoded_data: bytes
-        if force_large_text is False and test_is_small_font(message):
+        if is_korean and not force_large_text:
+            # Korean non-description text: always use small font encoding
+            encoded_data = convert_string_bytes(
+                small_font_symbol_conversion_table, message
+            )
+        elif force_large_text is False and test_is_small_font(message):
             encoded_data = convert_string_bytes(
                 small_font_symbol_conversion_table, message
             )
